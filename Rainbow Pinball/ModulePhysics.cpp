@@ -17,6 +17,8 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	world = NULL;
 	mouse_joint = NULL;
 	debug = true;
+
+	
 }
 
 // Destructor
@@ -43,8 +45,85 @@ bool ModulePhysics::Start()
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-
-	
+	 //COORDS 
+	int mainboard1[150] = {
+		0, 895,
+		24, 895,
+		24, 627,
+		24, 455,
+		28, 384,
+		38, 316,
+		65, 236,
+		97, 184,
+		133, 144,
+		187, 101,
+		242, 74,
+		301, 65,
+		323, 42,
+		363, 24,
+		394, 20,
+		433, 27,
+		464, 45,
+		496, 84,
+		512, 104,
+		528, 136,
+		553, 196,
+		564, 267,
+		567, 301,
+		561, 357,
+		558, 368,
+		493, 517,
+		494, 527,
+		498, 533,
+		507, 537,
+		518, 560,
+		522, 577,
+		524, 605,
+		522, 820,
+		493, 820,
+		491, 772,
+		355, 846,
+		355, 897,
+		574, 894,
+		572, 634,
+		557, 633,
+		557, 602,
+		537, 601,
+		537, 571,
+		533, 556,
+		528, 543,
+		522, 534,
+		526, 531,
+		530, 521,
+		525, 508,
+		515, 501,
+		536, 455,
+		564, 398,
+		573, 358,
+		573, 277,
+		574, 238,
+		566, 201,
+		555, 162,
+		526, 106,
+		502, 70,
+		454, 21,
+		413, 6,
+		364, 10,
+		333, 20,
+		304, 37,
+		293, 36,
+		283, 51,
+		226, 65,
+		158, 101,
+		93, 160,
+		53, 225,
+		25, 300,
+		8, 405,
+		11, 453,
+		11, 633,
+		0, 635
+	};
+	CreateChain(0, 0, mainboard1, 150, false);
 
 	return true;
 }
@@ -144,10 +223,17 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool dynamic)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	if (dynamic == true) 
+	{
+		body.type = b2_dynamicBody;
+	}
+	else
+	{
+		body.type = b2_staticBody;
+	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
