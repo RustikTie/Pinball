@@ -21,12 +21,14 @@ public:
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
-
+	
 	PhysBody* sensor;
 	bool sensed;
 
 	SDL_Texture* background;
 	SDL_Texture* mainBoard;
+	SDL_Texture* flipperLeft;
+	SDL_Texture* flipperRight;
 	SDL_Texture* circle = nullptr;
 	SDL_Texture* box = nullptr;
 	SDL_Texture* rick = nullptr;

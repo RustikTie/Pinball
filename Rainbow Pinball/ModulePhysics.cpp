@@ -274,6 +274,36 @@ bool ModulePhysics::Start()
 		481, 613
 	};
 	CreateChain(0, 0, mainboard7, 32, false);
+	
+	/*int flipperright[20] = {
+		20, 76,
+		27, 76,
+		98, 48,
+		104, 40,
+		104, 28,
+		94, 22,
+		86, 22,
+		19, 60,
+		15, 64,
+		15, 70
+	};
+	CreateChain(310, 739, flipperright, 20, false); //change to true once its fixed on the chain
+	int flipperleft[18] = {
+		14, 37,
+		20, 47,
+		92, 76,
+		99, 77,
+		104, 71,
+		104, 62,
+		34, 23,
+		23, 23,
+		16, 29
+	};
+	CreateChain(180, 739, flipperleft, 18, false); //same as above comment */
+
+	CreateRectangle(360,770,99,19, false);  //change to true once its fixed on the chain
+	CreateRectangle(250, 770, 99, 19, false); //change to true once its fixed on the chain
+
 
 	return true;
 }
@@ -321,10 +351,17 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool dynamic)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	if (dynamic == true)
+	{
+		body.type = b2_dynamicBody;
+	}
+	else
+	{
+		body.type = b2_staticBody;
+	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);

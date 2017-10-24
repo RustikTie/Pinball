@@ -26,6 +26,9 @@ bool ModuleSceneIntro::Start()
 
 	background = App->textures->Load("assets/background.png");
 	mainBoard = App->textures->Load("assets/mainboard.png");
+	flipperLeft = App->textures->Load("assets/flipperleft.png");
+	flipperRight = App->textures->Load("assets/flipperright.png");
+
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
@@ -48,6 +51,20 @@ update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(background, 0, 0, NULL);
 	App->renderer->Blit(mainBoard, 0, 0, NULL);
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	{
+
+	}
+	else
+		App->renderer->Blit(flipperLeft, 180, 739, NULL);
+	
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	{
+
+	}
+	else
+		App->renderer->Blit(flipperRight, 310, 739, NULL);
+
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
@@ -108,7 +125,7 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
-
+	
 	// ray -----------------
 	if(ray_on == true)
 	{
