@@ -42,6 +42,10 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
+	App->textures->Unload(background);
+	App->textures->Unload(mainBoard);
+	App->textures->Unload(flipperLeft);
+	App->textures->Unload(flipperRight);
 
 	return true;
 }
