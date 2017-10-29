@@ -29,6 +29,7 @@ public:
 	SDL_Texture* mainBoard;
 	SDL_Texture* flipperLeft;
 	SDL_Texture* flipperRight;
+	SDL_Texture* spring;
 	SDL_Texture* circle = nullptr;
 	SDL_Texture* box = nullptr;
 	SDL_Texture* rick = nullptr;

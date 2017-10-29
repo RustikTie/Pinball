@@ -28,6 +28,7 @@ bool ModuleSceneIntro::Start()
 	mainBoard = App->textures->Load("assets/mainboard.png");
 	flipperLeft = App->textures->Load("assets/flipperleft.png");
 	flipperRight = App->textures->Load("assets/flipperright.png");
+	spring = App->textures->Load("assets/spring.png");
 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
