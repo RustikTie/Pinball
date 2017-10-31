@@ -35,6 +35,35 @@ bool ModuleSceneIntro::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 		
+	//----------FLIPPERS JOINTS-----------
+	flipper_right = App->physics->CreateRectangle(360, 770, 99, 19, true);  //change to true once its fixed on the chain
+	flipper_left = App->physics->CreateRectangle(250, 770, 99, 19, true); //change to true once its fixed on the chain	
+	PhysBody* right_joint = App->physics->CreateCircle(401, 772, 5, false);
+	PhysBody* left_joint = App->physics->CreateCircle(205, 772, 5, false);
+
+	b2RevoluteJointDef RightFJoint;
+	b2RevoluteJointDef LeftFJoint;
+	b2RevoluteJoint* joint_r;
+	b2RevoluteJoint* joint_l;
+
+	RightFJoint.Initialize(flipper_right->body, right_joint->body, right_joint->body->GetWorldCenter());
+	LeftFJoint.Initialize(flipper_left->body, left_joint->body, left_joint->body->GetWorldCenter());
+
+	RightFJoint.lowerAngle = -0.5f * b2_pi; // -90 degrees
+	RightFJoint.upperAngle = 0.25f * b2_pi; // 45 degrees
+	RightFJoint.enableLimit = true;
+	RightFJoint.collideConnected = false;
+
+	joint_r = (b2RevoluteJoint*)App->physics->world->CreateJoint(&RightFJoint);
+
+	LeftFJoint.lowerAngle = -30;
+	LeftFJoint.upperAngle = 30;
+	LeftFJoint.enableLimit = true;
+	LeftFJoint.collideConnected = false;
+
+	joint_l = (b2RevoluteJoint*)App->physics->world->CreateJoint(&LeftFJoint);
+
+
 	return ret;
 }
 
@@ -46,6 +75,7 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(mainBoard);
 	App->textures->Unload(flipperLeft);
 	App->textures->Unload(flipperRight);
+	App->textures->Unload(spring);
 
 	return true;
 }

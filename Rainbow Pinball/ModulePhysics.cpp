@@ -275,21 +275,7 @@ bool ModulePhysics::Start()
 		481, 613
 	};
 	CreateChain(0, 0, mainboard7, 32, false);	
-
-
-	PhysBody* right_joint = CreateCircle(401,772,5,false);
-	PhysBody* left_joint = CreateCircle(205, 772, 5, false);
-
-	App->scene_intro->flipper_right = CreateRectangle(360, 770, 99, 19, false);  //change to true once its fixed on the chain
-	App->scene_intro->flipper_left = CreateRectangle(250, 770, 99, 19, false); //change to true once its fixed on the chain	
-
-	b2RevoluteJointDef LeftFJoint;
-	b2Vec2 v2; 
-	v2.x = 403; //205
-	v2.y = 772; 
-	LeftFJoint.Initialize(App->scene_intro->flipper_right->body, right_joint->body, v2); 
-	LeftFJoint.collideConnected = true;
-
+	
 	return true;
 }
 
