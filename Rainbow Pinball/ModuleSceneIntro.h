@@ -22,6 +22,10 @@ public:
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
 	
+	PhysBody* flipper_left;
+	PhysBody* flipper_right;
+	PhysBody* spring_;
+
 	PhysBody* sensor;
 	bool sensed;
 

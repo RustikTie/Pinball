@@ -29,13 +29,12 @@ bool ModuleSceneIntro::Start()
 	flipperLeft = App->textures->Load("assets/flipperleft.png");
 	flipperRight = App->textures->Load("assets/flipperright.png");
 	spring = App->textures->Load("assets/spring.png");
-
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
-
+		
 	return ret;
 }
 
@@ -60,16 +59,23 @@ update_status ModuleSceneIntro::Update()
 	{
 
 	}
-	else
-		App->renderer->Blit(flipperLeft, 180, 739, NULL);
+	else {
+		int x, y;
+		flipper_left->GetPosition(x, y);
+		App->renderer->Blit(flipperLeft, x-15,y-22, NULL, 1.0f, flipper_left->GetRotation()); // 180, 739
+	}
+
 	
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 
 	}
 	else
-		App->renderer->Blit(flipperRight, 310, 739, NULL);
-
+	{
+		int x, y;
+		flipper_right->GetPosition(x, y);
+		App->renderer->Blit(flipperRight, x-6, y - 22, NULL, 1.0f, flipper_right->GetRotation());
+	}
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
@@ -80,7 +86,7 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25, true));
 		circles.getLast()->data->listener = this;
 	}
 	

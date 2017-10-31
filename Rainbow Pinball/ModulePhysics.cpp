@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModulePhysics.h"
+#include "ModuleSceneIntro.h"
 #include "p2Point.h"
 #include "math.h"
 
@@ -273,37 +274,21 @@ bool ModulePhysics::Start()
 		481, 693,
 		481, 613
 	};
-	CreateChain(0, 0, mainboard7, 32, false);
-	
-	/*int flipperright[20] = {
-		20, 76,
-		27, 76,
-		98, 48,
-		104, 40,
-		104, 28,
-		94, 22,
-		86, 22,
-		19, 60,
-		15, 64,
-		15, 70
-	};
-	CreateChain(310, 739, flipperright, 20, false); //change to true once its fixed on the chain
-	int flipperleft[18] = {
-		14, 37,
-		20, 47,
-		92, 76,
-		99, 77,
-		104, 71,
-		104, 62,
-		34, 23,
-		23, 23,
-		16, 29
-	};
-	CreateChain(180, 739, flipperleft, 18, false); //same as above comment */
+	CreateChain(0, 0, mainboard7, 32, false);	
 
-	CreateRectangle(360,770,99,19, false);  //change to true once its fixed on the chain
-	CreateRectangle(250, 770, 99, 19, false); //change to true once its fixed on the chain
 
+	PhysBody* right_joint = CreateCircle(401,772,5,false);
+	PhysBody* left_joint = CreateCircle(205, 772, 5, false);
+
+	App->scene_intro->flipper_right = CreateRectangle(360, 770, 99, 19, true);  //change to true once its fixed on the chain
+	App->scene_intro->flipper_left = CreateRectangle(250, 770, 99, 19, false); //change to true once its fixed on the chain	
+
+	b2RevoluteJointDef LeftFJoint;
+	b2Vec2 v2; 
+	v2.x = 403; //205
+	v2.y = 772; 
+	LeftFJoint.Initialize(App->scene_intro->flipper_right->body, right_joint->body, v2); 
+	LeftFJoint.collideConnected = true;
 
 	return true;
 }
@@ -327,10 +312,17 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool isDynamic)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	if (isDynamic == true)
+	{
+		body.type = b2_dynamicBody;
+	}
+	else
+	{
+		body.type = b2_staticBody;
+	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -351,10 +343,10 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool dynamic)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, bool isDynamic)
 {
 	b2BodyDef body;
-	if (dynamic == true)
+	if (isDynamic == true)
 	{
 		body.type = b2_dynamicBody;
 	}
