@@ -280,7 +280,7 @@ bool ModulePhysics::Start()
 	PhysBody* right_joint = CreateCircle(401,772,5,false);
 	PhysBody* left_joint = CreateCircle(205, 772, 5, false);
 
-	App->scene_intro->flipper_right = CreateRectangle(360, 770, 99, 19, true);  //change to true once its fixed on the chain
+	App->scene_intro->flipper_right = CreateRectangle(360, 770, 99, 19, false);  //change to true once its fixed on the chain
 	App->scene_intro->flipper_left = CreateRectangle(250, 770, 99, 19, false); //change to true once its fixed on the chain	
 
 	b2RevoluteJointDef LeftFJoint;
