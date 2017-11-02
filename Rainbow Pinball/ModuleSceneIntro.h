@@ -23,6 +23,7 @@ public:
 	p2List<PhysBody*> ricks;
 	
 	PhysBody* flipper_left;
+	PhysBody* flipper_leftupper;
 	PhysBody* flipper_right;
 	PhysBody* spring_ = nullptr;
 	PhysBody* ball;
@@ -37,11 +38,15 @@ public:
 	SDL_Texture* flipperRight;
 	SDL_Texture* spring;
 	SDL_Texture* Ball;
+	SDL_Texture* scoreBox;
+	SDL_Texture* Lives;
+	SDL_Texture* end;
+	SDL_Texture* welldone;
 	SDL_Texture* circle = nullptr;
 	SDL_Texture* box = nullptr;
 	SDL_Texture* rick = nullptr;
 
-
+	uint lives = 3;
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;

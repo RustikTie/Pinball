@@ -33,6 +33,10 @@ bool ModuleSceneIntro::Start()
 	flipperRight = App->textures->Load("assets/flipperright.png");
 	spring = App->textures->Load("assets/spring.png");
 	Ball = App->textures->Load("assets/ball.png");
+	scoreBox = App->textures->Load("assets/scorebox.png");
+	Lives = App->textures->Load("assets/lives.png");
+	end = App->textures->Load("assets/end.png");
+	welldone = App->textures->Load("assets/welldone.png");
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
@@ -41,17 +45,25 @@ bool ModuleSceneIntro::Start()
 		
 	//----------FLIPPER JOINTS-----------//
 
-	flipper_right = App->physics->CreateRectangle(360, 770-50, 99, 19, true);  //change to true once its fixed on the chain
-	flipper_left = App->physics->CreateRectangle(250, 770-50, 99, 19, true); //change to true once its fixed on the chain	
-	PhysBody* right_joint = App->physics->CreateCircle(401, 772-50, 5, false);
-	PhysBody* left_joint = App->physics->CreateCircle(205, 772-50, 5, false);	
+	flipper_right = App->physics->CreateRectangle(360, 770, 99, 19, true); 
+	flipper_left = App->physics->CreateRectangle(250, 770, 99, 19, true); 	
+	flipper_leftupper = App->physics->CreateRectangle(140, 380- 50, 99, 19, true); 
+
+	PhysBody* right_joint = App->physics->CreateCircle(401, 772, 5, false);
+	PhysBody* left_joint = App->physics->CreateCircle(205, 772, 5, false);	
+	PhysBody* left_jointupper = App->physics->CreateCircle(95, 380-50, 5, false);
+
 	b2RevoluteJointDef RightFJoint;
 	b2RevoluteJointDef LeftFJoint;
+	b2RevoluteJointDef LeftUpperJoint;
 	b2RevoluteJoint* joint_r;
 	b2RevoluteJoint* joint_l;
+	b2RevoluteJoint* joint_lu;
+
 
 	RightFJoint.Initialize(flipper_right->body, right_joint->body, right_joint->body->GetWorldCenter());
 	LeftFJoint.Initialize(flipper_left->body, left_joint->body, left_joint->body->GetWorldCenter());
+	LeftUpperJoint.Initialize(flipper_leftupper->body, left_jointupper->body, left_jointupper->body->GetWorldCenter());
 
 	RightFJoint.lowerAngle =  -30 * DEGTORAD;
 	RightFJoint.upperAngle = 30 * DEGTORAD;
@@ -64,6 +76,12 @@ bool ModuleSceneIntro::Start()
 	LeftFJoint.enableLimit = true;
 	LeftFJoint.collideConnected = false;
 	joint_l = (b2RevoluteJoint*)App->physics->world->CreateJoint(&LeftFJoint);
+
+	LeftUpperJoint.lowerAngle = -30 * DEGTORAD;
+	LeftUpperJoint.upperAngle = 30 * DEGTORAD;
+	LeftUpperJoint.enableLimit = true;
+	LeftUpperJoint.collideConnected = false;
+	joint_lu = (b2RevoluteJoint*)App->physics->world->CreateJoint(&LeftUpperJoint);
 	
 	//----------SPRING---------//
 
@@ -71,7 +89,7 @@ bool ModuleSceneIntro::Start()
 
 	//-------------BALL-----------//
 
-	ball = App->physics->CreateCircle(40, 800, 11, true);
+	ball = App->physics->CreateCircle(40, 790, 11, true);
 	ball->body->SetBullet(true);
 
 	return ret;
@@ -87,63 +105,100 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(flipperRight);
 	App->textures->Unload(spring);
 	App->textures->Unload(Ball);
+	App->textures->Unload(scoreBox);
+	App->textures->Unload(Lives);
+	App->textures->Unload(end);
+	App->textures->Unload(welldone);
+
 	return true;
 }
 
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	App->renderer->Blit(background, 0, 0, NULL);
-	App->renderer->Blit(mainBoard, 0, 0, NULL);
-	
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	if (lives > 0)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10, true));
-		circles.getLast()->data->listener = this;
-	}
-	
-	// All draw functions ------------------------------------------------------
-	p2List_item<PhysBody*>* c = circles.getFirst();
+		App->renderer->Blit(background, 0, 0, NULL);
+		App->renderer->Blit(mainBoard, 0, 0, NULL);
 
-	while(c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		if(c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
-			App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
-	}
+		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		{
+			circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10, true));
+			circles.getLast()->data->listener = this;
+		}
 
-	c = boxes.getFirst();
+		// All draw functions ------------------------------------------------------
+		p2List_item<PhysBody*>* c = circles.getFirst();
 
-	while(c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
-		
-		c = c->next;
-	}
+		while (c != NULL)
+		{
+			int x, y;
+			c->data->GetPosition(x, y);
+			if (c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
+				App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
+			c = c->next;
+		}
 
-	c = ricks.getFirst();
+		c = boxes.getFirst();
 
-	while(c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
-	}
-	
+		while (c != NULL)
+		{
+			int x, y;
+			c->data->GetPosition(x, y);
+			App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
+
+			c = c->next;
+		}
+
+		c = ricks.getFirst();
+
+		while (c != NULL)
+		{
+			int x, y;
+			c->data->GetPosition(x, y);
+			App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
+			c = c->next;
+		}
+
 		int x, y;
 		ball->GetPosition(x, y);
 		App->renderer->Blit(Ball, x, y, NULL, 1.0f);
 		if (y > 899)
 		{
-			ball->body->SetTransform({PIXEL_TO_METERS(40),PIXEL_TO_METERS(800)}, 0.0f);
+			ball->body->SetTransform({ PIXEL_TO_METERS(40),PIXEL_TO_METERS(790) }, 0.0f);
 			ball->body->SetLinearVelocity({ 0,0 });
-		}
-	
+			lives = lives - 1;
+		}	
+			SDL_Rect r;
+			r.h = 15;
+			r.w = 100;
+			r.x = 0;
+			App->renderer->Blit(scoreBox, 5, 5, NULL, 0.0f);
+
+			if (lives == 1)
+			{
+				r.y = 15;
+				App->renderer->Blit(Lives, 90, 25, &r, 0.0f);
+			}
+			else if (lives == 2)
+			{
+				r.y = 30;
+				App->renderer->Blit(Lives, 90, 25, &r, 0.0f);
+			}
+			else if (lives == 3)
+			{
+				r.y = 45;
+				App->renderer->Blit(Lives, 90, 25, &r, 0.0f);
+			}	
+
+	}
+
+	if (lives == 0)
+	{
+		App->renderer->Blit(end, 0,0, NULL, 0.0f);
+		App->renderer->Blit(welldone, 0, 0, NULL, 0.0f);
+
+	}
 	
 	return UPDATE_CONTINUE;
 }
