@@ -15,4 +15,6 @@ public:
 
 public:
 
+	uint max_movement;
+
 };

@@ -6,11 +6,13 @@
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModulePlayer.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	ray_on = false;
 	sensed = false;
+
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -35,12 +37,12 @@ bool ModuleSceneIntro::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 		
-	//----------FLIPPERS JOINTS-----------
-	flipper_right = App->physics->CreateRectangle(360, 770, 99, 19, true);  //change to true once its fixed on the chain
-	flipper_left = App->physics->CreateRectangle(250, 770, 99, 19, true); //change to true once its fixed on the chain	
-	PhysBody* right_joint = App->physics->CreateCircle(401, 772, 5, false);
-	PhysBody* left_joint = App->physics->CreateCircle(205, 772, 5, false);
+	//----------FLIPPER JOINTS-----------//
 
+	flipper_right = App->physics->CreateRectangle(360, 770-50, 99, 19, true);  //change to true once its fixed on the chain
+	flipper_left = App->physics->CreateRectangle(250, 770-50, 99, 19, true); //change to true once its fixed on the chain	
+	PhysBody* right_joint = App->physics->CreateCircle(401, 772-50, 5, false);
+	PhysBody* left_joint = App->physics->CreateCircle(205, 772-50, 5, false);	
 	b2RevoluteJointDef RightFJoint;
 	b2RevoluteJointDef LeftFJoint;
 	b2RevoluteJoint* joint_r;
@@ -49,20 +51,25 @@ bool ModuleSceneIntro::Start()
 	RightFJoint.Initialize(flipper_right->body, right_joint->body, right_joint->body->GetWorldCenter());
 	LeftFJoint.Initialize(flipper_left->body, left_joint->body, left_joint->body->GetWorldCenter());
 
-	RightFJoint.lowerAngle = -0.5f * b2_pi; // -90 degrees
-	RightFJoint.upperAngle = 0.25f * b2_pi; // 45 degrees
+	RightFJoint.lowerAngle =  -30 * DEGTORAD;
+	RightFJoint.upperAngle = 30 * DEGTORAD;
 	RightFJoint.enableLimit = true;
 	RightFJoint.collideConnected = false;
-
 	joint_r = (b2RevoluteJoint*)App->physics->world->CreateJoint(&RightFJoint);
 
-	LeftFJoint.lowerAngle = -30;
-	LeftFJoint.upperAngle = 30;
+	LeftFJoint.lowerAngle = -30 * DEGTORAD;
+	LeftFJoint.upperAngle = 30 * DEGTORAD;
 	LeftFJoint.enableLimit = true;
 	LeftFJoint.collideConnected = false;
-
 	joint_l = (b2RevoluteJoint*)App->physics->world->CreateJoint(&LeftFJoint);
+	
+	//----------SPRING---------//
 
+	spring_ = App->physics->CreateRectangle(40, 750, 20, 40, false);
+
+	//-------------BALL-----------//
+
+	ball = App->physics->CreateCircle(40, 730, 10, true);
 
 	return ret;
 }
@@ -85,34 +92,7 @@ update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(background, 0, 0, NULL);
 	App->renderer->Blit(mainBoard, 0, 0, NULL);
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	{
 
-	}
-	else {
-		int x, y;
-		flipper_left->GetPosition(x, y);
-		App->renderer->Blit(flipperLeft, x-15,y-22, NULL, 1.0f, flipper_left->GetRotation()); // 180, 739
-	}
-
-	
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	{
-
-	}
-	else
-	{
-		int x, y;
-		flipper_right->GetPosition(x, y);
-		App->renderer->Blit(flipperRight, x-6, y - 22, NULL, 1.0f, flipper_right->GetRotation());
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-	{
-		ray_on = !ray_on;
-		ray.x = App->input->GetMouseX();
-		ray.y = App->input->GetMouseY();
-	}
 
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
@@ -120,15 +100,6 @@ update_status ModuleSceneIntro::Update()
 		circles.getLast()->data->listener = this;
 	}
 	
-	// Prepare for raycast ------------------------------------------------------
-	
-	iPoint mouse;
-	mouse.x = App->input->GetMouseX();
-	mouse.y = App->input->GetMouseY();
-	int ray_hit = ray.DistanceTo(mouse);
-
-	fVector normal(0.0f, 0.0f);
-
 	// All draw functions ------------------------------------------------------
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
@@ -148,12 +119,7 @@ update_status ModuleSceneIntro::Update()
 		int x, y;
 		c->data->GetPosition(x, y);
 		App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
-		if(ray_on)
-		{
-			int hit = c->data->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
-			if(hit >= 0)
-				ray_hit = hit;
-		}
+		
 		c = c->next;
 	}
 
@@ -167,19 +133,6 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 	
-	// ray -----------------
-	if(ray_on == true)
-	{
-		fVector destination(mouse.x-ray.x, mouse.y-ray.y);
-		destination.Normalize();
-		destination *= ray_hit;
-
-		App->renderer->DrawLine(ray.x, ray.y, ray.x + destination.x, ray.y + destination.y, 255, 255, 255);
-
-		if(normal.x != 0.0f)
-			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
-	}
-
 	return UPDATE_CONTINUE;
 }
 

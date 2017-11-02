@@ -25,6 +25,7 @@ public:
 	PhysBody* flipper_left;
 	PhysBody* flipper_right;
 	PhysBody* spring_;
+	PhysBody* ball;
 
 	PhysBody* sensor;
 	bool sensed;
@@ -37,6 +38,7 @@ public:
 	SDL_Texture* circle = nullptr;
 	SDL_Texture* box = nullptr;
 	SDL_Texture* rick = nullptr;
+
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
