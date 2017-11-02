@@ -8,6 +8,7 @@
 #include "ModulePhysics.h"
 #include "ModulePlayer.h"
 
+
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	ray_on = false;
@@ -31,6 +32,7 @@ bool ModuleSceneIntro::Start()
 	flipperLeft = App->textures->Load("assets/flipperleft.png");
 	flipperRight = App->textures->Load("assets/flipperright.png");
 	spring = App->textures->Load("assets/spring.png");
+	Ball = App->textures->Load("assets/ball.png");
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
@@ -69,7 +71,7 @@ bool ModuleSceneIntro::Start()
 
 	//-------------BALL-----------//
 
-	ball = App->physics->CreateCircle(40, 800, 10, true);
+	ball = App->physics->CreateCircle(40, 800, 11, true);
 	ball->body->SetBullet(true);
 
 	return ret;
@@ -84,7 +86,7 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(flipperLeft);
 	App->textures->Unload(flipperRight);
 	App->textures->Unload(spring);
-
+	App->textures->Unload(Ball);
 	return true;
 }
 
@@ -93,8 +95,7 @@ update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(background, 0, 0, NULL);
 	App->renderer->Blit(mainBoard, 0, 0, NULL);
-
-
+	
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10, true));
@@ -134,6 +135,16 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 	
+		int x, y;
+		ball->GetPosition(x, y);
+		App->renderer->Blit(Ball, x, y, NULL, 1.0f);
+		if (y > 899)
+		{
+			ball->body->SetTransform({PIXEL_TO_METERS(40),PIXEL_TO_METERS(800)}, 0.0f);
+			ball->body->SetLinearVelocity({ 0,0 });
+		}
+	
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -142,6 +153,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	int x, y;
 
 	App->audio->PlayFx(bonus_fx);
+
 
 	/*
 	if(bodyA)

@@ -77,22 +77,20 @@ update_status ModulePlayer::Update()
 	{
 		if (App->scene_intro->spring_ == NULL)
 			App->scene_intro->spring_ = App->physics->CreateRectangle(40, 825, 20, 40, false);
-		App->scene_intro->ball->body->ApplyForce({ 0, - (max_movement * 10) }, App->scene_intro->ball->body->GetLocalCenter(), true);
+		int x, y;
+		App->scene_intro->ball->GetPosition(x, y);
+		if (y < 820 && x < 60)
+		{
+			App->scene_intro->ball->body->ApplyForce({ 0, -(max_movement * 10) }, App->scene_intro->ball->body->GetLocalCenter(), true);
+			App->scene_intro->ball->body->SetGravityScale(1.5);
+		}
+
 		max_movement = 0;
-		App->scene_intro->ball->body->SetGravityScale(1.5);
 
 	}
 
 	App->renderer->Blit(App->scene_intro->spring, 17, 800 + max_movement, NULL);
 
-	b2Vec2 v = App->scene_intro->ball->body->GetPosition();  // THIS DOESN'T WORK
-	if ( v.y > 896)
-	{
-		App->physics->world->DestroyBody(App->scene_intro->ball->body);
-		App->scene_intro->ball = NULL;
-		App->scene_intro->ball = App->physics->CreateCircle(40, 730, 10, true);
-		App->scene_intro->ball->body->SetBullet(true);
-	}
 
 	return UPDATE_CONTINUE;
 }
