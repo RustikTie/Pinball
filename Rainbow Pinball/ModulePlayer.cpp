@@ -100,7 +100,7 @@ update_status ModulePlayer::Update()
 		App->renderer->Blit(App->scene_intro->spring, 17, 800 + max_movement, NULL);
 		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
 		{
-			App->scene_intro->lives = 0;
+			App->scene_intro->lives = 0;			
 		}		
 	}
 	
@@ -110,6 +110,7 @@ update_status ModulePlayer::Update()
 		App->scene_intro->ball->body->SetLinearVelocity({ 0,0 });
 		App->scene_intro->ball->body->SetBullet(true);
 		App->scene_intro->lives = 3;
+		score = 0;
 	}
 
 	char score[64];
