@@ -65,18 +65,33 @@ update_status ModulePlayer::Update()
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && max_movement <50)
 	{		
 		max_movement += 1;
+		if (App->scene_intro->spring_ != NULL)
+		{
+			App->physics->world->DestroyBody(App->scene_intro->spring_->body);
+			App->scene_intro->spring_ = NULL;
+		}
+		App->scene_intro->ball->body->SetGravityScale(0.5);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP)
 	{
+		if (App->scene_intro->spring_ == NULL)
+			App->scene_intro->spring_ = App->physics->CreateRectangle(40, 825, 20, 40, false);
+		App->scene_intro->ball->body->ApplyForce({ 0, - (max_movement * 10) }, App->scene_intro->ball->body->GetLocalCenter(), true);
 		max_movement = 0;
+		App->scene_intro->ball->body->SetGravityScale(1.5);
+
 	}
 
 	App->renderer->Blit(App->scene_intro->spring, 17, 800 + max_movement, NULL);
 
-	if (App->scene_intro->ball == NULL)
+	b2Vec2 v = App->scene_intro->ball->body->GetPosition();  // THIS DOESN'T WORK
+	if ( v.y > 896)
 	{
+		App->physics->world->DestroyBody(App->scene_intro->ball->body);
+		App->scene_intro->ball = NULL;
 		App->scene_intro->ball = App->physics->CreateCircle(40, 730, 10, true);
+		App->scene_intro->ball->body->SetBullet(true);
 	}
 
 	return UPDATE_CONTINUE;

@@ -24,7 +24,7 @@ public:
 	
 	PhysBody* flipper_left;
 	PhysBody* flipper_right;
-	PhysBody* spring_;
+	PhysBody* spring_ = nullptr;
 	PhysBody* ball;
 
 	PhysBody* sensor;

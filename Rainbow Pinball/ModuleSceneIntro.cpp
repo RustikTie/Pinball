@@ -65,11 +65,12 @@ bool ModuleSceneIntro::Start()
 	
 	//----------SPRING---------//
 
-	spring_ = App->physics->CreateRectangle(40, 750, 20, 40, false);
+	spring_ = App->physics->CreateRectangle(40, 825, 20, 40, false);
 
 	//-------------BALL-----------//
 
-	ball = App->physics->CreateCircle(40, 730, 10, true);
+	ball = App->physics->CreateCircle(40, 800, 10, true);
+	ball->body->SetBullet(true);
 
 	return ret;
 }

@@ -15,6 +15,7 @@ public:
 
 public:
 
-	uint max_movement;
+	
+	float max_movement;
 
 };
