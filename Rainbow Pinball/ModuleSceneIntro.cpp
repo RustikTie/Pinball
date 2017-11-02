@@ -37,11 +37,19 @@ bool ModuleSceneIntro::Start()
 	Lives = App->textures->Load("assets/lives.png");
 	end = App->textures->Load("assets/end.png");
 	welldone = App->textures->Load("assets/welldone.png");
+	addon = App->textures->Load("assets/addon.png");
+	rail = App->textures->Load("assets/rail.png");
+	circle1 = App->textures->Load("assets/bouncer1.png");
+	circle2 = App->textures->Load("assets/bouncer2.png");
+	circle3 = App->textures->Load("assets/bouncer3.png");
+	circle4 = App->textures->Load("assets/bouncer4.png");
+	leftbouncer = App->textures->Load("assets/bouncerleft.png");
+	rightbouncer = App->textures->Load("assets/bouncerright.png");
+
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
-	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 		
 	//----------FLIPPER JOINTS-----------//
 
@@ -92,6 +100,54 @@ bool ModuleSceneIntro::Start()
 	ball = App->physics->CreateCircle(40, 790, 11, true);
 	ball->body->SetBullet(true);
 
+	//----------BOUNCERS----------//
+	bouncer1 = App->physics->CreateCircle(359, 407, 25, false);
+	b2Fixture* fix1 = bouncer1->body->GetFixtureList();
+	fix1->SetRestitution(3.0f);
+
+	bouncer2 = App->physics->CreateCircle(280, 307, 25, false);
+	b2Fixture* fix2 = bouncer2->body->GetFixtureList();
+	fix2->SetRestitution(3.0f);
+
+	bouncer3 = App->physics->CreateCircle(285, 225, 25, false);
+	b2Fixture* fix3 = bouncer3->body->GetFixtureList();
+	fix3->SetRestitution(3.0f);
+
+	bouncer4 = App->physics->CreateCircle(360, 255, 25, false);
+	b2Fixture* fix4 = bouncer4->body->GetFixtureList();
+	fix4->SetRestitution(3.0f);
+
+	int bouncerleft[8] = {
+		71, 113,
+		31, 13,
+		27, 14,
+		67, 114
+	};
+	bouncer_left = App->physics->CreateChain(150, 600, bouncerleft, 8, false);
+	b2Fixture* fix5 = bouncer_left->body->GetFixtureList();
+	fix5->SetRestitution(3.0f);
+
+	int bouncerright[8] = {
+		40, 111,
+		78, 16,
+		83, 19,
+		46, 113
+	};
+	bouncer_right = App->physics->CreateChain(340, 600, bouncerright, 8, false);
+	b2Fixture* fix6 = bouncer_right->body->GetFixtureList();
+	fix6->SetRestitution(3.0f);
+
+	PhysBody* bouncer5 = App->physics->CreateRectangle(100, 819, 30, 3, false);
+	b2Fixture* fix7 = bouncer5->body->GetFixtureList();
+	fix7->SetRestitution(3.0f);
+
+	PhysBody* bouncer6 = App->physics->CreateRectangle(510, 819, 30, 3, false);
+	b2Fixture* fix8 = bouncer6->body->GetFixtureList();
+	fix8->SetRestitution(3.0f);
+	
+	//---------MUSIC----------//
+	App->audio->PlayMusic("assets/ukelele.wav", 2.0f);
+
 	return ret;
 }
 
@@ -109,6 +165,8 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(Lives);
 	App->textures->Unload(end);
 	App->textures->Unload(welldone);
+	App->textures->Unload(addon);
+	App->textures->Unload(rail);	
 
 	return true;
 }
@@ -119,7 +177,9 @@ update_status ModuleSceneIntro::Update()
 	if (lives > 0)
 	{
 		App->renderer->Blit(background, 0, 0, NULL);
+		App->renderer->Blit(addon, 0, 0, NULL);
 		App->renderer->Blit(mainBoard, 0, 0, NULL);
+
 
 		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		{
@@ -128,37 +188,6 @@ update_status ModuleSceneIntro::Update()
 		}
 
 		// All draw functions ------------------------------------------------------
-		p2List_item<PhysBody*>* c = circles.getFirst();
-
-		while (c != NULL)
-		{
-			int x, y;
-			c->data->GetPosition(x, y);
-			if (c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
-				App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
-			c = c->next;
-		}
-
-		c = boxes.getFirst();
-
-		while (c != NULL)
-		{
-			int x, y;
-			c->data->GetPosition(x, y);
-			App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
-
-			c = c->next;
-		}
-
-		c = ricks.getFirst();
-
-		while (c != NULL)
-		{
-			int x, y;
-			c->data->GetPosition(x, y);
-			App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
-			c = c->next;
-		}
 
 		int x, y;
 		ball->GetPosition(x, y);
@@ -169,6 +198,29 @@ update_status ModuleSceneIntro::Update()
 			ball->body->SetLinearVelocity({ 0,0 });
 			lives = lives - 1;
 		}	
+		App->renderer->Blit(rail, 0, 0, NULL);
+		SDL_Rect b;
+			b.x = 23;
+			b.y = 24;
+			b.h = 59;
+			b.w = 59;
+		App->renderer->Blit(circle1, 330, 380, &b, 0.0f);
+		App->renderer->Blit(circle2, 255, 280, &b, 0.0f);
+		App->renderer->Blit(circle3, 260, 200, &b, 0.0f);
+		App->renderer->Blit(circle4, 335, 230, &b, 0.0f);
+		b.x = 17;
+		b.y = 9;
+		b.h = 121;
+		b.w = 66;
+		App->renderer->Blit(leftbouncer, 165, 610, &b, 0.0f);
+		b.x = 39;
+		b.y = 11;
+		b.h = 121;
+		b.w = 66;
+		App->renderer->Blit(rightbouncer, 380, 615, &b, 0.0f);
+
+
+
 			SDL_Rect r;
 			r.h = 15;
 			r.w = 100;

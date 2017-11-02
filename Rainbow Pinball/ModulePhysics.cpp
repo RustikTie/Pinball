@@ -267,11 +267,32 @@ bool ModulePhysics::Start()
 		469, 713
 	};
 	CreateChain(0, 0, mainboard7, 24, false);		
+	int bouncerright[16] = {
+		40, 116,
+		81, 12,
+		86, 10,
+		94, 13,
+		93, 96,
+		87, 102,
+		49, 121,
+		42, 122
+	};
+	CreateChain(340, 600, bouncerright, 16, false);
+	int bouncerleft[14] = {
+		21, 10,
+		18, 15,
+		18, 97,
+		62, 121,
+		72, 117,
+		31, 14,
+		26, 9
+	};
+	CreateChain(148, 600, bouncerleft, 14, false);
 
 	return true;
 }
 
-// 
+
 update_status ModulePhysics::PreUpdate()
 {
 	world->Step(1.0f / 60.0f, 6, 2);

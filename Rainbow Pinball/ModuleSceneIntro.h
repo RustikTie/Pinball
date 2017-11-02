@@ -28,9 +28,16 @@ public:
 	PhysBody* spring_ = nullptr;
 	PhysBody* ball;
 	PhysBody* ball_reset;
+	PhysBody* bouncer1;
+	PhysBody* bouncer2;
+	PhysBody* bouncer3;
+	PhysBody* bouncer4;
+	PhysBody* bouncer_left;
+	PhysBody* bouncer_right;
 
 	PhysBody* sensor;
 	bool sensed;
+
 
 	SDL_Texture* background;
 	SDL_Texture* mainBoard;
@@ -42,6 +49,15 @@ public:
 	SDL_Texture* Lives;
 	SDL_Texture* end;
 	SDL_Texture* welldone;
+	SDL_Texture* addon;
+	SDL_Texture* rail;
+	SDL_Texture* circle1;
+	SDL_Texture* circle2;
+	SDL_Texture* circle3;
+	SDL_Texture* circle4;
+	SDL_Texture* leftbouncer;
+	SDL_Texture* rightbouncer;
+
 	SDL_Texture* circle = nullptr;
 	SDL_Texture* box = nullptr;
 	SDL_Texture* rick = nullptr;
