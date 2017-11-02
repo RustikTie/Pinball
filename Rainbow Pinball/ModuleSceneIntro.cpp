@@ -146,7 +146,7 @@ bool ModuleSceneIntro::Start()
 	fix8->SetRestitution(3.0f);
 	
 	//---------MUSIC----------//
-	App->audio->PlayMusic("assets/ukelele.wav", 2.0f);
+	App->audio->PlayMusic("assets/ukelele.ogg", 2.0f);
 
 	return ret;
 }
