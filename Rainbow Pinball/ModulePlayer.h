@@ -15,7 +15,7 @@ public:
 
 public:
 
-	
+	int score = 0;
 	float max_movement;
 
 };

@@ -137,11 +137,11 @@ bool ModuleSceneIntro::Start()
 	b2Fixture* fix6 = bouncer_right->body->GetFixtureList();
 	fix6->SetRestitution(3.0f);
 
-	PhysBody* bouncer5 = App->physics->CreateRectangle(100, 819, 30, 3, false);
+	bouncer5 = App->physics->CreateRectangle(100, 819, 30, 3, false);
 	b2Fixture* fix7 = bouncer5->body->GetFixtureList();
 	fix7->SetRestitution(3.0f);
 
-	PhysBody* bouncer6 = App->physics->CreateRectangle(510, 819, 30, 3, false);
+	bouncer6 = App->physics->CreateRectangle(510, 819, 30, 3, false);
 	b2Fixture* fix8 = bouncer6->body->GetFixtureList();
 	fix8->SetRestitution(3.0f);
 	
@@ -243,6 +243,7 @@ update_status ModuleSceneIntro::Update()
 				App->renderer->Blit(Lives, 90, 25, &r, 0.0f);
 			}	
 
+
 	}
 
 	if (lives == 0)
@@ -260,6 +261,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	int x, y;
 
 	App->audio->PlayFx(bonus_fx);
+
 
 
 	/*

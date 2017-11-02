@@ -32,6 +32,8 @@ public:
 	PhysBody* bouncer2;
 	PhysBody* bouncer3;
 	PhysBody* bouncer4;
+	PhysBody* bouncer5;
+	PhysBody* bouncer6;
 	PhysBody* bouncer_left;
 	PhysBody* bouncer_right;
 

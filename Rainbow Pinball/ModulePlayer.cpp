@@ -5,6 +5,7 @@
 #include "ModuleSceneIntro.h"
 #include "ModuleInput.h"
 #include "ModulePhysics.h"
+#include "ModuleWindow.h"
 
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -100,8 +101,7 @@ update_status ModulePlayer::Update()
 		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
 		{
 			App->scene_intro->lives = 0;
-		}
-		
+		}		
 	}
 	
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
@@ -111,6 +111,14 @@ update_status ModulePlayer::Update()
 		App->scene_intro->ball->body->SetBullet(true);
 		App->scene_intro->lives = 3;
 	}
+
+	char score[64];
+	char Title[64] = "Rainbow PinBall | Score: ";
+	sprintf_s(score, "%d   ", App->player->score);
+	strcat_s(Title, score);
+
+	App->window->SetTitle(Title);
+
 	return UPDATE_CONTINUE;
 }
 

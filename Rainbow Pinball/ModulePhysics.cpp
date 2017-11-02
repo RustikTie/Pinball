@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
+#include "ModulePlayer.h"
 #include "p2Point.h"
 #include "math.h"
 
@@ -657,4 +658,26 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 
 	if(physB && physB->listener != NULL)
 		physB->listener->OnCollision(physB, physA);
+
+	if (physA == App->scene_intro->ball )
+	{
+		if (physB == App->scene_intro->bouncer1 || physB == App->scene_intro->bouncer2 || physB == App->scene_intro->bouncer3 || physB == App->scene_intro->bouncer4 ||
+			physB == App->scene_intro->bouncer5 || physB == App->scene_intro->bouncer6 || physB == App->scene_intro->bouncer_left || physB == App->scene_intro->bouncer_right)
+		{
+			App->player->score += 100;
+		}
+		LOG("SCORE: %d", App->player->score);
+
+	}
+	if (physB == App->scene_intro->ball)
+	{
+		if (physA == App->scene_intro->bouncer1 || physA == App->scene_intro->bouncer2 || physA == App->scene_intro->bouncer3 || physA == App->scene_intro->bouncer4 ||
+			physA == App->scene_intro->bouncer5 || physA == App->scene_intro->bouncer6 || physA == App->scene_intro->bouncer_left || physA == App->scene_intro->bouncer_right)
+		{
+			App->player->score += 100;
+		}
+		LOG("SCORE: %d", App->player->score);
+
+	}
+
 }
